@@ -660,11 +660,19 @@ text(0.2,0.9,['Chi^2: ' num2str(chisquare) ' Soll: ' num2str(Soll)],'units','nor
 hold off           %figure(4)
 set(4,'Position',screensize);
 saveas(4,'NewFitlambdafix.fig'),saveas(4,'NewFitlambdafix.jpg')
+%Save final parameter into a table
 disp(num2str(D))
 dlmwrite('..\Deff_auto.csv',num2str(D),'delimiter','','-append')
 [~, ParentFolderName] = fileparts(pwd);
 outvar = [ParentFolderName, ';', num2str(D)];
 dlmwrite('..\name_Deff_auto.csv',outvar,'delimiter','','-append')
+%Check the fit
+msgbox('Paused for checking the fit. Press any key to continue.')
+disp('Press any key to close session.')
+pause
+clear all
+close all
+
 %% --------------------------------------------------------------------------
 % Subfunctions
 

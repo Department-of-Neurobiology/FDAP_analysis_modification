@@ -1,2 +1,0 @@
-cd C:\Users\NITru\OneDrive\Documents\PhD_work\GitHub\FDAP_analysis_modification\test_reyher_script_mod_reyher_dE1-5_cells\
-FOR /R %G IN (CW_Analysis09raw_DecayFit03_mod01.m*) DO "C:\Program Files\MATLAB\R2009b\bin\matlab.exe" -nodisplay -nosplash -nodesktop -r "run('%G'); exit" & pause 
