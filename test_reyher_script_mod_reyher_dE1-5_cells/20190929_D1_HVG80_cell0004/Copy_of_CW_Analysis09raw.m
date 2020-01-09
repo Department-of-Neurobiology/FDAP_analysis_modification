@@ -1,14 +1,4 @@
 function CW_Analysis
-%Version 9 fused together with DecayFit03 and modified for automated analysis
-%The buttons and unused steps are blocked by comments, the differences in the script: 
-%1)		Always takes first file named "cell_112.tif" and changes working directory to that with the script file
-%2)		Doesn't "Process or re-process reference area" by skipping the yes and cancel options
-%3)		Automatically corrects for mean intensity
-%4)		For DecayFit03 choosing the file was done for changing the working directory - is automatic for pwd now
-%5)		Skips "Soma and tip in frame", directly assumes we only selected process in the area
-%6)		The final parameter is saved in a atble in the upper directory
-%Nataliya Trushina, 09.01.2020
-
 % Version 9, addition / changes: 
 % 1)    If dark frame is prsent, the intensity distribution on the main axis of the dark frame is subtracted 
 %       from those of subsequent frames
@@ -19,7 +9,7 @@ clear all
 load('mymap')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% to be adjusted %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DarkFramePresent=1; % 0 = not present, 1 = present
-filen='cell_112.tif'; %is always called that when using bash renaming procedure
+filen='cell_112.tif';
 %[filen,cpath]=uigetfile('*.tif','Select the LAST tif-file of series.');
 cd(pwd);
 cpath=pwd;
@@ -667,8 +657,8 @@ outvar = [ParentFolderName, ';', num2str(D)];
 dlmwrite('..\name_Deff_auto.csv',outvar,'delimiter','','-append')
 %% --------------------------------------------------------------------------
 % Subfunctions
-
-
+close all
+clear all
 %pause
 %
 %
