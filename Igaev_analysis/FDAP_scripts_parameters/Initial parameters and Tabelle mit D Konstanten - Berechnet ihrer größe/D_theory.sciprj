@@ -1,0 +1,80 @@
+SciDAVis 1.25.0 project file
+<scripting-lang>	muParser
+<windows>	2
+<folder>	D_theory	11.09.15 22:34	
+<table>
+12497
+<table creation_time="1915-11-09 22:34:00:000" caption_spec="%n" name="estimated-diffusion-constants" columns="6" rows="18"><comment><![CDATA[]]></comment><column creation_time="2015-11-09 22:34:59:544" caption_spec="%n%C{ - }%c" name="name" type="TypeQString" mode="Text" plot_designation="X"><comment><![CDATA[dsadas]]></comment><input_filter><simple_filter creation_time="2015-11-09 22:36:09:515" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="SimpleCopyThroughFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 22:36:09:515" caption_spec="%n%C{ - }%c" name="OutputFilter" filter_name="SimpleCopyThroughFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><row type="TypeQString" index="0" invalid="no">tau276</row><row type="TypeQString" index="1" invalid="no">tau307</row><row type="TypeQString" index="2" invalid="no">tau338</row><row type="TypeQString" index="3" invalid="no">tau369</row><row type="TypeQString" index="4" invalid="no">tau369f</row><row type="TypeQString" index="5" invalid="no">tau401</row><row type="TypeQString" index="6" invalid="no">tau421</row><row type="TypeQString" index="7" invalid="no">tau352wt</row><row type="TypeQString" index="8" invalid="no">tau383wt</row><row type="TypeQString" index="9" invalid="no">tau410wt</row><row type="TypeQString" index="10" invalid="no">tau441wt</row><row type="TypeQString" index="11" invalid="no">tau441wt-R1 (411)</row><row type="TypeQString" index="12" invalid="no">tauN_Rprime (265)</row><row type="TypeQString" index="13" invalid="no">tau441dE1_NT</row><row type="TypeQString" index="14" invalid="no">tau441dE1-2_NT</row><row type="TypeQString" index="15" invalid="no">tau441dE1-3_NT</row><row type="TypeQString" index="16" invalid="no">tau441dE1-4_NT</row><row type="TypeQString" index="17" invalid="no">tau441dE1-5_NT</row></column><column creation_time="2015-11-09 22:42:43:034" caption_spec="%n%C{ - }%c" name="aa_length" type="TypeDouble" mode="Numeric" plot_designation="Y"><comment><![CDATA[]]></comment><input_filter><simple_filter creation_time="2015-11-09 22:42:43:034" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="String2DoubleFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 22:42:43:034" caption_spec="%n%C{ - }%c" name="OutputFilter" format="g" digits="6" filter_name="Double2StringFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><row type="TypeDouble" index="0" invalid="no">2.7600000000000000e+02</row><row type="TypeDouble" index="1" invalid="no">3.0700000000000000e+02</row><row type="TypeDouble" index="2" invalid="no">3.3800000000000000e+02</row><row type="TypeDouble" index="3" invalid="no">3.6900000000000000e+02</row><row type="TypeDouble" index="4" invalid="no">3.1100000000000000e+02</row><row type="TypeDouble" index="5" invalid="no">4.0100000000000000e+02</row><row type="TypeDouble" index="6" invalid="no">4.2100000000000000e+02</row><row type="TypeDouble" index="7" invalid="no">3.5200000000000000e+02</row><row type="TypeDouble" index="8" invalid="no">3.8300000000000000e+02</row><row type="TypeDouble" index="9" invalid="no">4.1000000000000000e+02</row><row type="TypeDouble" index="10" invalid="no">4.4100000000000000e+02</row><row type="TypeDouble" index="11" invalid="no">4.1000000000000000e+02</row><row type="TypeDouble" index="12" invalid="no">2.6500000000000000e+02</row><row type="TypeDouble" index="13" invalid="no">3.9800000000000000e+02</row><row type="TypeDouble" index="14" invalid="no">3.6900000000000000e+02</row><row type="TypeDouble" index="15" invalid="no">3.4000000000000000e+02</row><row type="TypeDouble" index="16" invalid="no">3.1800000000000000e+02</row><row type="TypeDouble" index="17" invalid="no">2.9900000000000000e+02</row></column><column creation_time="2015-11-09 22:34:59:545" caption_spec="%n%C{ - }%c" name="Rg_RC" type="TypeDouble" mode="Numeric" plot_designation="Y"><comment><![CDATA[Theory:\nRg = 0.1927*n^0.588]]></comment><input_filter><simple_filter creation_time="2015-11-09 22:34:59:545" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="String2DoubleFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 22:34:59:545" caption_spec="%n%C{ - }%c" name="OutputFilter" format="g" digits="6" filter_name="Double2StringFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><formula start_row="0" end_row="17">0.1927*col(&quot;aa_length&quot;)^0.588</formula><row type="TypeDouble" index="0" invalid="no">5.2497213839940580e+00</row><row type="TypeDouble" index="1" invalid="no">5.5888065777365812e+00</row><row type="TypeDouble" index="2" invalid="no">5.9140464934007690e+00</row><row type="TypeDouble" index="3" invalid="no">6.2272057885868657e+00</row><row type="TypeDouble" index="4" invalid="no">5.6315095301614946e+00</row><row type="TypeDouble" index="5" invalid="no">6.5392901230029068e+00</row><row type="TypeDouble" index="6" invalid="no">6.7291403578880251e+00</row><row type="TypeDouble" index="7" invalid="no">6.0568776479644955e+00</row><row type="TypeDouble" index="8" invalid="no">6.3650613465922987e+00</row><row type="TypeDouble" index="9" invalid="no">6.6251943437044778e+00</row><row type="TypeDouble" index="10" invalid="no">6.9153092324663836e+00</row><row type="TypeDouble" index="11" invalid="no">6.6251943437044778e+00</row><row type="TypeDouble" index="12" invalid="no">5.1256658273523303e+00</row><row type="TypeDouble" index="13" invalid="no">6.5104792794473552e+00</row><row type="TypeDouble" index="14" invalid="no">6.2272057885868657e+00</row><row type="TypeDouble" index="15" invalid="no">5.9345981638425949e+00</row><row type="TypeDouble" index="16" invalid="no">5.7056990547900472e+00</row><row type="TypeDouble" index="17" invalid="no">5.5027068052979597e+00</row></column><column creation_time="2015-11-09 23:29:13:878" caption_spec="%n%C{ - }%c" name="Rg_RC_corrected" type="TypeDouble" mode="Numeric" plot_designation="Y"><comment><![CDATA[Theory (441):\nRg = 0.1927*n^0.588 = 6.9 nm\n\nExperiment:\nRg = 6.5 nm\n\nRatio:\nRg_th/Rg = 6.9/6.5 ~= 1.06]]></comment><input_filter><simple_filter creation_time="2015-11-09 23:29:13:878" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="String2DoubleFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 23:29:13:878" caption_spec="%n%C{ - }%c" name="OutputFilter" format="g" digits="6" filter_name="Double2StringFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><formula start_row="0" end_row="17">col(&quot;Rg_RC&quot;)/1.06389</formula><row type="TypeDouble" index="0" invalid="no">4.9344588105857357e+00</row><row type="TypeDouble" index="1" invalid="no">5.2531808530361044e+00</row><row type="TypeDouble" index="2" invalid="no">5.5588890706753222e+00</row><row type="TypeDouble" index="3" invalid="no">5.8532421477660899e+00</row><row type="TypeDouble" index="4" invalid="no">5.2933193564762284e+00</row><row type="TypeDouble" index="5" invalid="no">6.1465848189219816e+00</row><row type="TypeDouble" index="6" invalid="no">6.3250339394937685e+00</row><row type="TypeDouble" index="7" invalid="no">5.6931427572065676e+00</row><row type="TypeDouble" index="8" invalid="no">5.9828190382391968e+00</row><row type="TypeDouble" index="9" invalid="no">6.2273302161919730e+00</row><row type="TypeDouble" index="10" invalid="no">6.5000227772292094e+00</row><row type="TypeDouble" index="11" invalid="no">6.2273302161919730e+00</row><row type="TypeDouble" index="12" invalid="no">4.8178531872207939e+00</row><row type="TypeDouble" index="13" invalid="no">6.1195041587451291e+00</row><row type="TypeDouble" index="14" invalid="no">5.8532421477660899e+00</row><row type="TypeDouble" index="15" invalid="no">5.5782065475214493e+00</row><row type="TypeDouble" index="16" invalid="no">5.3630535626709976e+00</row><row type="TypeDouble" index="17" invalid="no">5.1722516475368314e+00</row></column><column creation_time="2015-11-09 23:39:24:130" caption_spec="%n%C{ - }%c" name="D_Tau" type="TypeDouble" mode="Numeric" plot_designation="Y"><comment><![CDATA[]]></comment><input_filter><simple_filter creation_time="2015-11-09 23:39:24:130" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="String2DoubleFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 23:39:24:130" caption_spec="%n%C{ - }%c" name="OutputFilter" format="g" digits="6" filter_name="Double2StringFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><formula start_row="0" end_row="17">12.4*6.5/col(&quot;Rg_RC_corrected&quot;)</formula><row type="TypeDouble" index="0" invalid="no">1.6334111418073128e+01</row><row type="TypeDouble" index="1" invalid="no">1.5343084933658204e+01</row><row type="TypeDouble" index="2" invalid="no">1.4499299945592961e+01</row><row type="TypeDouble" index="3" invalid="no">1.3770146179713628e+01</row><row type="TypeDouble" index="4" invalid="no">1.5226740457552058e+01</row><row type="TypeDouble" index="5" invalid="no">1.3112972874282411e+01</row><row type="TypeDouble" index="6" invalid="no">1.2743014625855260e+01</row><row type="TypeDouble" index="7" invalid="no">1.4157382563079747e+01</row><row type="TypeDouble" index="8" invalid="no">1.3471910061936519e+01</row><row type="TypeDouble" index="9" invalid="no">1.2942946206775446e+01</row><row type="TypeDouble" index="10" invalid="no">1.2399956548207312e+01</row><row type="TypeDouble" index="11" invalid="no">1.2942946206775446e+01</row><row type="TypeDouble" index="12" invalid="no">1.6729442942302395e+01</row><row type="TypeDouble" index="13" invalid="no">1.3171001752620414e+01</row><row type="TypeDouble" index="14" invalid="no">1.3770146179713628e+01</row><row type="TypeDouble" index="15" invalid="no">1.4449088486300818e+01</row><row type="TypeDouble" index="16" invalid="no">1.5028751635263969e+01</row><row type="TypeDouble" index="17" invalid="no">1.5583155169641437e+01</row></column><column creation_time="2015-11-09 23:41:50:422" caption_spec="%n%C{ - }%c" name="D_GFP-Tau" type="TypeDouble" mode="Numeric" plot_designation="Y"><comment><![CDATA[]]></comment><input_filter><simple_filter creation_time="2015-11-09 23:41:50:422" caption_spec="%n%C{ - }%c" name="InputFilter" filter_name="String2DoubleFilter"><comment><![CDATA[]]></comment></simple_filter></input_filter><output_filter><simple_filter creation_time="2015-11-09 23:41:50:422" caption_spec="%n%C{ - }%c" name="OutputFilter" format="g" digits="6" filter_name="Double2StringFilter"><comment><![CDATA[]]></comment></simple_filter></output_filter><formula start_row="0" end_row="17">col(&quot;D_Tau&quot;)*0.89</formula><row type="TypeDouble" index="0" invalid="no">1.4537359162085083e+01</row><row type="TypeDouble" index="1" invalid="no">1.3655345590955802e+01</row><row type="TypeDouble" index="2" invalid="no">1.2904376951577735e+01</row><row type="TypeDouble" index="3" invalid="no">1.2255430099945128e+01</row><row type="TypeDouble" index="4" invalid="no">1.3551799007221332e+01</row><row type="TypeDouble" index="5" invalid="no">1.1670545858111346e+01</row><row type="TypeDouble" index="6" invalid="no">1.1341283017011181e+01</row><row type="TypeDouble" index="7" invalid="no">1.2600070481140975e+01</row><row type="TypeDouble" index="8" invalid="no">1.1989999955123503e+01</row><row type="TypeDouble" index="9" invalid="no">1.1519222124030147e+01</row><row type="TypeDouble" index="10" invalid="no">1.1035961327904507e+01</row><row type="TypeDouble" index="11" invalid="no">1.1519222124030147e+01</row><row type="TypeDouble" index="12" invalid="no">1.4889204218649132e+01</row><row type="TypeDouble" index="13" invalid="no">1.1722191559832169e+01</row><row type="TypeDouble" index="14" invalid="no">1.2255430099945128e+01</row><row type="TypeDouble" index="15" invalid="no">1.2859688752807727e+01</row><row type="TypeDouble" index="16" invalid="no">1.3375588955384933e+01</row><row type="TypeDouble" index="17" invalid="no">1.3869008100980878e+01</row></column><column_width column="0">130</column_width><column_width column="1">116</column_width><column_width column="2">88</column_width><column_width column="3">162</column_width><column_width column="4">86</column_width><column_width column="5">120</column_width></table>
+geometry	16	19	1845	607	active
+
+</table>
+<note>
+diff-const-calculation	11.09.15 22:51
+geometry	22	483	574	259	
+WindowLabel		0
+AutoExec	0
+<content>
+Mylonas et al., 2008: Rg_Tau = 6.5 nm
+
+Murkasch et al., 2009: Rh_Tau = 5.4 nm
+
+Konzack et al., 2007: D_GFP-Tau = 11 µm^2/s
+
+Rg/Rh ~= 1.2 for IDPs
+
+
+D_Tau = k*T / 6*PI*nu*Rh = 
+= 1.38*10^-23 J/K * 310K / 6*3.14*3.4*10^-3 kg/m/s * 5.4*10^-9 m ~=
+~= 12.4 µm^2/s
+
+D_GFP-Tau/D_Tau ~= 11/12.4 ~= 0.89
+</content>
+</note>
+</folder>
+<log>
+[21.09.15 13:53	Plot: ''Graph5'']
+Exponential decay fit of dataset: chi2-kon-koff_kon, using function: y0+A*exp(-x/t)
+Y standard errors: Unknown
+Scaled Levenberg-Marquardt algorithm with tolerance = 0.0001
+From x = 0.000100121 to x = 0.00017382
+A (amplitude) = 94,857.5037304764 +/- 174,651,795,623.46
+t (e-folding time) = -1.74413642824889 +/- 1,055,570.48379842
+y0 (offset) = -94,860.7571714405 +/- 174,651,796,135.938
+--------------------------------------------------------------------------------------
+Chi^2/doF = 115.16306589649
+R^2 = 0.0113354883331572
+---------------------------------------------------------------------------------------
+Iterations = 1000
+Status = the iteration has not converged yet
+---------------------------------------------------------------------------------------
+[21.09.15 13:53	Plot: ''Graph5'']
+Exponential decay fit of dataset: chi2-kon-koff_kon, using function: y0+A*exp(-x/t)
+Y standard errors: Unknown
+Scaled Levenberg-Marquardt algorithm with tolerance = 0.0001
+From x = 0.000100121 to x = 0.00017382
+A (amplitude) = 834,267.39843171 +/- 13,506,204,573,951.8
+t (e-folding time) = -15.3384959934596 +/- 1,055,459.18772053
+y0 (offset) = -834,270.652152525 +/- 13,506,204,574,464.3
+--------------------------------------------------------------------------------------
+Chi^2/doF = 115.163059898726
+R^2 = 0.0113355398234242
+---------------------------------------------------------------------------------------
+Iterations = 1000
+Status = the iteration has not converged yet
+---------------------------------------------------------------------------------------
+[21.09.15 13:53	Plot: ''Graph5'']
+Exponential decay fit of dataset: chi2-kon-koff_kon, using function: y0+A*exp(-x/t)
+Y standard errors: Unknown
+Scaled Levenberg-Marquardt algorithm with tolerance = 0.0001
+From x = 0.000100121 to x = 0.00017382
+A (amplitude) = 1,173,864.19129355 +/- 26,740,065,239,806.1
+t (e-folding time) = -21.5820376049982 +/- 1,055,478.62239209
+y0 (offset) = -1,173,867.44502476 +/- 26,740,065,240,318.6
+--------------------------------------------------------------------------------------
+Chi^2/doF = 115.163059674852
+R^2 = 0.0113355417453579
+---------------------------------------------------------------------------------------
+Iterations = 199
+Status = iteration is not making progress towards solution
+---------------------------------------------------------------------------------------
+</log>

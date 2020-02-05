@@ -1,0 +1,5 @@
+PAGFP-tubulin
+	-m reactionDominantPure -d 11.8 -kon0 0.025 -koff0 0.0025
+	
+PAGFP-hTau441wt
+	-m FullModel -d 11 -kon0 0.5 -koff0 0.5
