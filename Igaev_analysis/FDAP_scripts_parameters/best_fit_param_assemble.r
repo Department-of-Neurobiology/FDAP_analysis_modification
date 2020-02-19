@@ -37,7 +37,7 @@ levels(long_plot_fits$cell) <- as.factor(c(1:nlevels(long_plot_fits$cell_names))
 
 
 ### check file name and separators
-plot_Int <- read.table("../test_final.csv", sep = ",", header = TRUE)
+plot_Int <- read.table("../test_final.csv", sep = ";", header = TRUE)
 ###
 plot_Int <- cbind(plot_Int, "type"="Int","time"=1:nrow(plot_fits))
 long_plot_Int <- gather(plot_Int, cell, measured_intensity, -c(time:type))

@@ -51,7 +51,7 @@ function processFile(input, output, file) {
 	roiManager("Save", output + File.separator + name + ".zip");
 	roiManager("Delete");
 	close();
-	run("Close");
+	// run("Close");
 	}
 	// doCommand("Start Animation [\\]");
 	// waitForUser("Check area");
