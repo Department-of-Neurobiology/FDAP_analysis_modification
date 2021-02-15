@@ -6,7 +6,7 @@ function CW_Analysis
 %3)		Automatically corrects for mean intensity
 %4)		For DecayFit03 choosing the file was done for changing the working directory - is automatic for pwd now
 %5)		Skips "Soma and tip in frame", directly assumes we only selected process in the area
-%6)		The final parameter is saved in a table in the upper directory
+%6)		The final parameter is saved in a atble in the upper directory
 %Nataliya Trushina, 09.01.2020
 
 % Version 9, addition / changes: 
@@ -68,14 +68,14 @@ for pict=1:NumberOfFrames+DarkFramePresent
     xmax=sze(2); 
     ymax=sze(1);
     Z=z(ymax:-1:1,1:xmax,colorindex); % in viewer programs y=0 is top, in matlab  y=0 is bottom
-    clear z; pack; % free memory from the very large array z
+    clear z; % free memory from the very large array z
     IdxSat=find(Z>4094);
     SatPix=length(IdxSat);
     Z=double(Z); % raw data are now in double precision array "Z"
     %-----------------------------
-    fz=filter2(ff,Z,'vaild');% now smoothing Z with f
+    fz=filter2(ff,Z,'valid');% now smoothing Z with f
     a=min(min(fz));fz=(fz-a); % now getting new minimum and subtract it
-    if DarkFramePresent & pict==1
+    if DarkFramePresent && pict==1
         fn2='dark';
     else
         fn2=sprintf(format,pict-1);
@@ -557,6 +557,7 @@ end
 %     'Tag','StopButton');
 % uiwait(fig2hndl);
 figure(fig2hndl)
+set(fig2hndl,'Visible','on')
 TEXT='Select center of excitation peak by 1 left button mouse click.';
 [ileft,iright,a,b]=getlimits(fig2hndl,w,TEXT);
 from=ileft;to=iright;   % from = index of data point center-w/2 ; to = index of data point center+w/2
@@ -827,14 +828,15 @@ function [ileft,iright,x,y]=getlimits(fig2hndl,w,TEXT)
 % handle fig2hndl. From this position, 2 positions  w/2 to the left and w/2 to the rigth are calculated.
 % Returns indices ileft and iright of the data at these
 % positions, as well as the x- and y-values within that range.
-set(gcf,'pointer','fullcrosshair');
+set(gcf,'pointer','crosshair');
 texthndl=text('Position',[.2,.2],'String',TEXT,...
         'FontSize',10,'Units','normalized');
 drawnow;
 [xc,yc]=ginput(1);
-linehndl=findobj(fig2hndl,'type','line','-and','color','blue');
-x=get(linehndl,'xdata');
-y=get(linehndl,'ydata');
+linehndl=findobj(fig2hndl,'type','line');
+x=get(linehndl,'XData');
+disp(findobj(fig2hndl,'type','line'))
+y=get(linehndl,'YData');
 idx=find(x > xc-w/2);
 ileft=min(idx);
 idx=find(x < xc+w/2);
