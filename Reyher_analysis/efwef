@@ -6,7 +6,7 @@ function CW_Analysis
 %3)		Automatically corrects for mean intensity
 %4)		For DecayFit03 choosing the file was done for changing the working directory - is automatic for pwd now
 %5)		Skips "Soma and tip in frame", directly assumes we only selected process in the area
-%6)		The final parameter is saved in a atble in the upper directory
+%6)		The final parameter is saved in a table in the upper directory
 %Nataliya Trushina, 09.01.2020
 
 % Version 9, addition / changes: 
