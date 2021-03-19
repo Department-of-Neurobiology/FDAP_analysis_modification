@@ -8,6 +8,8 @@ library(jpeg)
 #Set working directory to the file location in RStudio
 #######
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
+output_dir <- paste("output_Reyher_fits", sep="")
+dir.create(output_dir)
 
 #######
 #Functions
@@ -37,8 +39,13 @@ for (subfolder in subfolders) {
   path_to_file <- paste(subfolder, '/NewFitlambdafix.jpg', sep="")
   if (file.exists(path_to_file)) {
     plot_jpeg(path_to_file)
+    file.copy(path_to_file, output_dir)
+    path_to_output_file <- paste(output_dir, '/NewFitlambdafix.jpg', sep="")
+    subfolder_name <- gsub("\\.", "",subfolder)
+    file.rename(from = path_to_output_file, to = paste(output_dir,subfolder_name,'_ROI.jpg',sep=""))
   }
   else {
     print(paste("The image file does not exist in", subfolder))
   }
 }  
+
