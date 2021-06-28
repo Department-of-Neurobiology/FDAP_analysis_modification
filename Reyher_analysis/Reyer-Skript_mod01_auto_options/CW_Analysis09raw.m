@@ -1,4 +1,14 @@
 function CW_Analysis
+%Version 9 fused together with DecayFit03 and modified for automated analysis
+%The buttons and unused steps are blocked by comments, the differences in the script: 
+%1)		Always takes first file named "cell_112.tif" and changes working directory to that with the script file
+%2)		Doesn't "Process or re-process reference area" by skipping the yes and cancel options
+%3)		Automatically corrects for mean intensity
+%4)		For DecayFit03 choosing the file was done for changing the working directory - is automatic for pwd now
+%5)		Skips "Soma and tip in frame", directly assumes we only selected process in the area
+%6)		The final parameter is saved in a atble in the upper directory
+%Nataliya Trushina, 09.01.2020
+
 % Version 9, addition / changes: 
 % 1)    If dark frame is prsent, the intensity distribution on the main axis of the dark frame is subtracted 
 %       from those of subsequent frames
@@ -9,8 +19,10 @@ clear all
 load('mymap')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% to be adjusted %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DarkFramePresent=1; % 0 = not present, 1 = present
-[filen,cpath]=uigetfile('*.tif','Select the LAST tif-file of series.');
-cd(cpath);
+filen='cell_112.tif'; %is always called that when using bash renaming procedure
+%[filen,cpath]=uigetfile('*.tif','Select the LAST tif-file of series.');
+cd(pwd);
+cpath=pwd;
 drawnow;
 [fn1, reminder]=strtok(filen,'_');fn1=[fn1 '_'];
 NOP=strtok(reminder,'.');
@@ -33,59 +45,61 @@ ff =-xf.*xf-yf.*yf;
 ff =exp(ff/3/rf);
 ff =ff/sum(sum(ff));
 %----------------------------------------------------------------------------------
-button = questdlg('Apply or re-apply filtering? "Cancel" stops processing');
-if strcmp(button,'Cancel'), return, end
-if strcmp(button,'Yes')
+%button = questdlg('Apply or re-apply filtering? "Cancel" stops processing');
+%if strcmp(button,'Cancel'), return, end
+%if strcmp(button,'Yes')
     % filtering, subtraction of minimum (offset), mean intensity in ref-area
-    fHandle=figure(1);
-    guidata(fHandle,1);
-    b = uicontrol('Style','PushButton',...
-    'Parent',fHandle, ...
-    'String','STOP', ...
-    'Callback',['guidata(gcbo,0);'], ...
-    'Units','normalized', ...
-    'Position',[0 0 0.1 0.1], ...
-    'Tag','StopButton');
-    format=['%0' num2str(digits) 'u'];
-    for pict=1:NumberOfFrames+DarkFramePresent
+fHandle=figure(1);
+guidata(fHandle,1);
+b = uicontrol('Style','PushButton',...
+'Parent',fHandle, ...
+'String','STOP', ...
+'Callback',['guidata(gcbo,0);'], ...
+'Units','normalized', ...
+'Position',[0 0 0.1 0.1], ...
+'Tag','StopButton');
+format=['%0' num2str(digits) 'u'];
+for pict=1:NumberOfFrames+DarkFramePresent
+    fn2=sprintf(format,pict-1);
+    fn=[fn1 fn2 fn3];
+    z=imread(fn);
+    %z=double(z); % raw data are now in double precision array "z"
+    sze=size(z);
+    xmax=sze(2); 
+    ymax=sze(1);
+    Z=z(ymax:-1:1,1:xmax,colorindex); % in viewer programs y=0 is top, in matlab  y=0 is bottom
+    clear z; pack; % free memory from the very large array z
+    IdxSat=find(Z>4094);
+    SatPix=length(IdxSat);
+    Z=double(Z); % raw data are now in double precision array "Z"
+    %-----------------------------
+    fz=filter2(ff,Z,'vaild');% now smoothing Z with f
+    a=min(min(fz));fz=(fz-a); % now getting new minimum and subtract it
+    if DarkFramePresent & pict==1
+        fn2='dark';
+    else
         fn2=sprintf(format,pict-1);
-        fn=[fn1 fn2 fn3];
-        z=imread(fn);
-        %z=double(z); % raw data are now in double precision array "z"
-        sze=size(z);
-        xmax=sze(2); 
-        ymax=sze(1);
-        Z=z(ymax:-1:1,1:xmax,colorindex); % in viewer programs y=0 is top, in matlab  y=0 is bottom
-        clear z; pack; % free memory from the very large array z
-        IdxSat=find(Z>4094);
-        SatPix=length(IdxSat);
-        Z=double(Z); % raw data are now in double precision array "Z"
-        %-----------------------------
-        fz=filter2(ff,Z,'vaild');% now smoothing Z with f
-        a=min(min(fz));fz=(fz-a); % now getting new minimum and subtract it
-        if DarkFramePresent & pict==1
-            fn2='dark';
-        else
-            fn2=sprintf(format,pict-1);
-        end %if
-        save(['fi_' fn2 '.mat'],'fz','ID','-mat'); % save filtered data 
-        contour(fz,CLineSet); title(['Filtered data. Frame ' fn2]); % display filtered data
-        text(0.4,-0.085,['SaturatedPixels ' num2str(SatPix)],'units','normalized','color','r');
-        if ~guidata(fHandle), return, end         % Stop button pressed.
-        drawnow
-    end %for pict
-end %if strcmp
+    end %if
+    save(['fi_' fn2 '.mat'],'fz','ID','-mat'); % save filtered data 
+    contour(fz,CLineSet); title(['Filtered data. Frame ' fn2]); % display filtered data
+    text(0.4,-0.085,['SaturatedPixels ' num2str(SatPix)],'units','normalized','color','r');
+    if ~guidata(fHandle), return, end         % Stop button pressed.
+    drawnow
+end %for pict
+%end %if strcmp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Reference Intensity %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-button = questdlg('Process or re-process reference area? "Cancel" stops processing');
+%button = questdlg('Process or re-process reference area? "Cancel" stops processing');
 if ~exist(['fi_00' num2str(DarkFramePresent) '.mat'])
     msgbox('No filtered data available - stop processing')
     return
 end %if ~exist
 
+%{
 if strcmp(button,'Cancel'), return, end
 if strcmp(button,'Yes')
+    print('We are here.')
     load(['fi_00' num2str(DarkFramePresent) '.mat']); % load filtered data for 1st frame (after darkframe)
     sze=size(fz);
     xmax=sze(2);ymax=sze(1);         % New array size. Filtering reduces array size by some pixels.
@@ -130,13 +144,14 @@ if strcmp(button,'Yes')
     end %for pict
     save('MeanIntensityRefArea.mat','IntMean','-mat')
 end %if strcmp
+%}
 
 if exist('MeanIntensityRefArea.mat')
     load('MeanIntensityRefArea.mat')
     figure(2)
     plot(IntMean), title(['Mean Intensity per pixel of reference area versus frame number -' ID])
-    msgbox('Paused for printing')
-    pause
+    %msgbox('Paused for printing')
+    %pause
 end %if exist
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,9 +168,9 @@ axis equal
 saveas(fHandle,'ROI.fig')
 saveas(fHandle,'ROI.jpg')
 Ax=axis;
-msghndl=msgbox('Paused for printing; Next comes main anlysis');
-set(msghndl,'position',[200 300 170 50]);
-while ishandle(msghndl), pause(0.1), end
+%msghndl=msgbox('Paused for printing; Next comes main anlysis');
+%set(msghndl,'position',[200 300 170 50]);
+%while ishandle(msghndl), pause(0.1), end
 
 
 % Allocation
@@ -201,7 +216,7 @@ for pict=1:NumberOfFrames+DarkFramePresent   % main loop
     z=(M>1).*(fz+eps);            % select ROI using  mask M; z is zero outside ROI and at least eps inside (eps is 2.2e-16 or so)
    
     if pict == 1
-     newsize=size(z); newymax=newsize(1); newxmax=newsize(2); % überflüssig in Schleife - fz hat konstante Grösse
+     newsize=size(z); newymax=newsize(1); newxmax=newsize(2); % Ã¼berflÃ¼ssig in Schleife - fz hat konstante GrÃ¶sse
      [yInROI,xInROI]=find(z > 0);                       % find x and y coordinates where z > 0 
      NinROI=length(yInROI);                             % Number of pixels in ROI
     end %if pict
@@ -358,13 +373,13 @@ tP1binx=tI1binSum;     % "x"-coordinate along main axis of bins
 tP1biny=tI1binSum;     % "y"-coordinate = frame number
 % end allocation
 
-button = questdlg('Do you want to correct for constant mean intensity? "Cancel" stops processing');
-if strcmp(button,'Cancel'), return, end
-swtch=0;
-if strcmp(button,'Yes')
-    AvgTotalInt=sum(IntTotalCell)/NumberOfFrames;
-    swtch=1;
-end %if strcmp(button,'Yes')
+%button = questdlg('Do you want to correct for constant mean intensity? "Cancel" stops processing');
+%if strcmp(button,'Cancel'), return, end
+%swtch=0;
+%if strcmp(button,'Yes')
+AvgTotalInt=sum(IntTotalCell)/NumberOfFrames;
+swtch=1;
+%end %if strcmp(button,'Yes')
 
 I1binSUM_darkframe=zeros(1,npmax);
 I1binAVG_darkframe=zeros(1,npmax);
@@ -379,7 +394,7 @@ for pict=1:NumberOfFrames
     I1binSUM=U{pict,2}-I1binSUM_darkframe;   % Abzug des darkframes
     I1binAVG=U{pict,3}-I1binAVG_darkframe;   %
     figure(33); plot(P1bin,I1binAVG_darkframe,'k',P1bin,U{pict,3},'g');
-                title(['Frame ' num2str(pict) '. Black=DarkFrame. Paused..']); pause %## Diagnose ##
+                title(['Frame ' num2str(pict) '. Black=DarkFrame. Paused..']); %pause %## Diagnose ##
     if swtch == 1
         I1binSUM=I1binSUM*AvgTotalInt/IntTotalCell(pict);
         I1binAVG=I1binAVG*AvgTotalInt/IntTotalCell(pict);
@@ -457,6 +472,203 @@ b = uicontrol('Parent',a, ...
     'Position',[330 25 20 20], ...
     'String','<', ...
     'Tag','Pushbutton2');
+
+%%
+% Version 03 
+% lambda fixed
+% 3 Fitparameter: Sigma0, D, offset
+% Zeifacher Fit fÃ¼r den Fall, dass das Anfangs-D zu schlecht ist.
+% Fit mit "echtem" Chiquadrat, dafÃ¼r: Fehler der Messpunkte aus Polynomfit
+% Offset wird im letzten Plot als rote Linie angezeigt
+clear all, close all, screensize=get(0,'ScreenSize');
+%dummy='All.mat'; %literally a dummy, not used anywhere
+cd(pwd);
+path=pwd;
+%[dummy,path]=uigetfile('*.mat','Select any mat-file in folder to be treated.');
+cd(path)
+if ~exist('All.mat'); msgbox('No all.mat - returned.'); return, end
+
+L=load('All.mat');
+tP1binx=L.tP1binx;
+tI1binAvg=L.tI1binAvg;
+NumberOfFrames=L.NumberOfFrames;
+
+pausetime=1;
+NPixels = 256;
+xScale  = 100/NPixels;       % Mikrons / Pixel
+yScale=1;                    % Seconds / Frame
+w=5;                         % width of region of activation in mikrons
+checkT1=10;                  % check-out times in Secs
+checkT2=50;
+StartF=1;
+D=1;                          % Estimate of D for fit
+lambda=0.001;                 % fixed
+
+%model = 1;
+%%
+%button = questdlg('Soma und Tip im Frame? "Cancel" stops processing');
+%if strcmp(button,'Cancel'), return, end
+%if strcmp(button,'No')
+model=0;
+%end 
+
+%%
+NofF=NumberOfFrames-StartF+1; % number of frames
+t=[0:(NofF-1)]' * yScale;         % time (column)vector
+fig2hndl=figure(2);
+plot(tP1binx(StartF,:)*xScale,tI1binAvg(StartF,:))
+xlabel('Position on main axis 1 in mikrons')
+XLimits=get(gca,'Xlim');set(gca,'XMinorTick','on');
+pause(pausetime)
+YLimits=showRotCell(xScale,XLimits); rotcellFigHndl=gcf;
+pause(pausetime/2)
+if model==1
+    TEXT='Select tip edge, then body edge (2 clicks)';
+    texthndl=text('Position',[.2,.2],'String',TEXT,...
+                  'FontSize',10,'Units','normalized');
+    axis('equal');drawnow
+    [xc,yc]=ginput(2);
+    xTip=xc(1), xBody=xc(2), abs(xTip-xBody)
+end
+% pict=StartF;
+% CBD=struct('pict',pict,'NofF',NofF,'tP1binx',tP1binx,'tI1binAvg',tI1binAvg,'xScale',xScale); % Callbacks der KnÃ¶pfe benÃ¶tigen diese Daten
+% guidata(fig2hndl,CBD); % CallBackData in Datenbereich der figure
+% evalin('base','CBD=guidata(gcf);'); % CBD im Base-Bereich fÃ¼r Callbacks erzeugen
+% bup = uicontrol('Parent',fig2hndl, ...
+%     'Units','Normalized', ...
+%     'Callback',['CBD.pict=CBD.pict+1;CBD.pict=min(CBD.pict,CBD.NofF);',...
+%     'plot(CBD.tP1binx(CBD.pict,:)*CBD.xScale,CBD.tI1binAvg(CBD.pict,:));title(num2str(CBD.pict));'], ...
+%     'Position',[0.51 0 0.1 0.05], ...
+%     'String','>', ...
+%     'Tag','Pushbutton1');
+% bdwn= uicontrol('Parent',fig2hndl, ...
+%     'Units','Normalized', ...
+%     'Callback',['CBD.pict=CBD.pict-1;',...
+%     'CBD.pict=max(CBD.pict,1);plot(CBD.tP1binx(CBD.pict,:)*CBD.xScale,CBD.tI1binAvg(CBD.pict,:));title(num2str(CBD.pict));'], ...
+%     'Position',[0.39 0 0.1 0.05], ...
+%     'String','<', ...
+%     'Tag','Pushbutton2');
+% bst = uicontrol('Style','PushButton',...
+%     'Parent',fig2hndl, ...
+%     'String','Cont.', ...
+%     'Callback',['[hbutton,hfigure]=gcbo; uiresume(hfigure);'], ...
+%     'Units','normalized', ...
+%     'Position',[0 0 0.1 0.1], ...
+%     'Tag','StopButton');
+% uiwait(fig2hndl);
+figure(fig2hndl)
+TEXT='Select center of excitation peak by 1 left button mouse click.';
+[ileft,iright,a,b]=getlimits(fig2hndl,w,TEXT);
+from=ileft;to=iright;   % from = index of data point center-w/2 ; to = index of data point center+w/2
+xchannels=to-from+1;    % number of x-bins in w
+hold on, plot(a,b,'r'), pause(pausetime)
+
+%% Zeige Grenzen in der RotCell
+figure(rotcellFigHndl)  
+hold on
+plot([a(1) a(1)],YLimits,'m',[a(xchannels) a(xchannels)],YLimits,'m') %plot vertical lines at "center +/- w/2"
+pause(pausetime)
+
+%%  extract sigma0 from start frame by gauss fit
+figure(3) 
+Xs=tP1binx(StartF,:)*xScale; Ys=tI1binAvg(StartF,:);
+% Normalize
+dx=abs(Xs(1)-Xs(2));
+AreaSF=sum(Ys)*dx;
+Ys=Ys/AreaSF;
+plot(Xs,Ys,'.') %Plot full intensity distribution for the start frame in blue and w-region in red
+xlabel('Position on main axis 1 in mikrons')
+hold on
+plot(Xs(from:to),Ys(from:to),'r.'), pause(pausetime)
+    
+%% ******** Fitting start frame Ys(Xs) ************************
+   % parameter estimates
+[height,iheight]=max(Ys);
+position=Xs(iheight);
+wValue=0.6*height; iwValue=find(Ys(iheight:length(Ys))< wValue,1)+iheight;
+width=Xs(iwValue)- position;
+offset=Ys(1);
+Pstart=[width, position, offset]
+   % show start estimates
+hL=plot(Xs,Gsimu(Pstart,Xs),'g');
+hT=title('Start curve. Paused for 5s.');
+pause(pausetime)
+delete(hT); delete(hL);
+   % do the fit
+Pout=fminsearch(@(P) chi(P,Xs,Ys),Pstart, optimset('Display','iter'))
+sigma0=Pout(1);
+offsetSF=Pout(3);
+ActPos=Pout(2); % Distance from tip in Âµm
+   % show the result
+hL=plot(Xs,Gsimu(Pout,Xs),'g');
+hT=title(['Fitted curve, Sigma0 = ', num2str(sigma0),' . Paused for 5s.']);
+pause(pausetime)
+%hold off %figure(3)
+saveas(3,'StartFramelambdafix.jpg')
+
+%% zeichne Iavg(t) mit Fehlern, Anzeige der Werte zu den Check-out-Zeiten
+Ic=tI1binAvg(StartF:NofF,from:to)/AreaSF; % Projected intensity in central region w, normalized    
+CentralArea=sum(Ic,2)*dx; 
+Iavg = CentralArea/abs(Xs(from)-Xs(to)); % Averaged intensity in region w   
+fehler=Polynomfit(t,Iavg); % Polynomfit zur Bestimmung der Fehler der Messpunkte
+figure(4), errorbar(t,Iavg,fehler,'.'), hold on % plot Iavg(t)
+title(['Center Int., avg over w ,' path]), xlabel('Time in secs')
+iT1=checkT1 /yScale +1; iT2=checkT2 /yScale +1;
+text(0.2,0.85,['CA/FAStratF at ' num2str(checkT1) ' sec: ' num2str(CentralArea(iT1))],'units','normalized')
+text(0.2,0.8, ['CA/FAStratF at ' num2str(checkT2) ' sec: ' num2str(CentralArea(iT2))],'units','normalized')
+text(0.2,0.75,cd,'units','normalized','interpreter','none')
+
+
+%% ********** Fit von Iavg(t)
+Pstart=[sigma0 D offsetSF ];   % parameter estimates, partly from start frame (see above)  
+if model==1                    % VollstÃ¤ndiges Modell mit Images, braucht Positionen von Tip, Body und Aktivierungsstelle
+    HP=[ActPos, xTip, xBody, lambda, fehler']; %constant parameters
+    hL=plot(t,Dsimu(Pstart,t,HP),'g'); % show start estimates
+    hT=title('Start curve. Paused for 1s.');pause(pausetime)
+    % -- do the fit --
+    delete(hT); delete(hL); % delete start estimates
+    Pout=fminsearch(@(P) Dchi(P,t,Iavg,HP),Pstart, optimset('Display','iter'))
+    Pstart=Pout; % nochmal, falls Startwert zu weit vom besten Wert entfernt war
+    Pout=fminsearch(@(P) Dchi(P,t,Iavg,HP),Pstart, optimset('Display','iter'))
+    D=Pout(2); chisquare=Dchi(Pout,t,Iavg,HP);
+else                           % einfaches Modell
+    HP=[0,0,0, lambda, fehler']; %constant parameters
+    hL=plot(t,DsimuX(Pstart,t,HP),'g'); % show start estimates
+    hT=title('Start curve. Paused for 1s.'); pause(pausetime)
+    % -- do the fit --
+    delete(hT); delete(hL); % delete start estimates
+    Pout=fminsearch(@(P) DchiX(P,t,Iavg,HP),Pstart, optimset('Display','iter'))
+    Pstart=Pout; % nochmal, falls Startwert zu weit vom besten Wert entfernt war
+    Pout=fminsearch(@(P) DchiX(P,t,Iavg,HP),Pstart, optimset('Display','iter'))
+    D=Pout(2); chisquare=DchiX(Pout,t,Iavg,HP);
+end
+
+
+Soll=length(t)-length(Pout);
+
+%% show the result
+figure(4)
+plot([0 max(t)], [Pout(3) Pout(3)],'r') % Offset-Linie
+if model==1
+    F=Dsimu(Pout,t,HP); hL = plot(t,F,'g');
+end
+F = DsimuX(Pout,t,HP);
+hL = plot(t,F,'r--');   %Kurve ohne Images
+hT = title(['Icenter(t), D = ', num2str(D),' .']);
+axis([0 max(t)*1.05 Pout(3)-abs(Pout(3))*0.1 max(max(Iavg),max(F))*1.1]);
+text(0.2,0.9,['Chi^2: ' num2str(chisquare) ' Soll: ' num2str(Soll)],'units','normalized')
+hold off           %figure(4)
+set(4,'Position',screensize);
+saveas(4,'NewFitlambdafix.fig'),saveas(4,'NewFitlambdafix.jpg')
+disp(num2str(D))
+dlmwrite('..\Deff_auto.csv',num2str(D),'delimiter','','-append')
+[~, ParentFolderName] = fileparts(pwd);
+outvar = [ParentFolderName, ';', num2str(D)];
+dlmwrite('..\name_Deff_auto.csv',outvar,'delimiter','','-append')
+%% --------------------------------------------------------------------------
+% Subfunctions
+close all
+clear all
 %pause
 %
 %
@@ -533,10 +745,10 @@ hold off
 %
 function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,low,high,binWidth,pad)
 % function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,binWidth,pad)
-% B ist unabhängige, A ist abhängige Variable, also A(k)=f(B(k)). B-Werte sind nicht äquidistant.
-% put2bins ordnet jeden B-Wert einem Intervall (=bin) der Breite binWidth auf einer äquidistanten Skala zu.
-% Diese Skala läuft von min(B) bis max(B) in Schritten von binWidth und
-% wird in Bbin zurückgegeben. Die zu einem Intervall j gehörenden A-Werte
+% B ist unabhÃ¤ngige, A ist abhÃ¤ngige Variable, also A(k)=f(B(k)). B-Werte sind nicht Ã¤quidistant.
+% put2bins ordnet jeden B-Wert einem Intervall (=bin) der Breite binWidth auf einer Ã¤quidistanten Skala zu.
+% Diese Skala lÃ¤uft von min(B) bis max(B) in Schritten von binWidth und
+% wird in Bbin zurÃ¼ckgegeben. Die zu einem Intervall j gehÃ¶renden A-Werte
 % werden aufsummiert nach AbinSUM(j) gelegt.
 % AbinAVG ist AbinSUM/(Anzahl der A-Werte im Intervall).
 % pad gibt Breite eines Einbettbereiches E an, in den Bbin
@@ -546,7 +758,7 @@ function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,low,high,binWidth,pad)
 Bmin=low;
 nB=floor((B-Bmin)/binWidth) +1;       % nB ordnet jedem B-Wert eine bin- (oder Intervall-) Nummer zu
 nBstop=floor((high-Bmin)/binWidth) +1;;  % Die Intervalle laufen von 1 bis nBstop. Nicht jedes Intervall kommt vor,
-% d.h. nB enthält i.A. nicht jede Zahl von
+% d.h. nB enthÃ¤lt i.A. nicht jede Zahl von
 % 1 bis nBstop
 kB=1:nBstop;                    % Index aller Bins
 
@@ -555,7 +767,7 @@ AbinSUM=AbinAVG;
 for k=kB                           % Schleife vektorisieren = ?
     binmembers=find(nB==k);
     AbinSUM(k)=sum(A(binmembers));   % Summe von Eregignissen
-    if ~isempty(binmembers)           % Mittelwert über Bin-Mitglieder
+    if ~isempty(binmembers)           % Mittelwert Ã¼ber Bin-Mitglieder
         AbinAVG(k)=AbinSUM(k)/length(binmembers);
     end %if
 end %for
@@ -594,3 +806,97 @@ saveas(fHandle,'RotCell.fig')
 close(fHandle);
 
 %-----------------------------------------
+
+
+%DecayFit03.m subfunctions below
+
+function dev=Polynomfit(x,y)
+zentr=mean(x); % Fit mit Polynom 4. Ordnung zur Ermittlung der Fehler der Messpunkte
+skala=std(x);   %Skalieren und Zentrieren
+z=(x-zentr)/skala;
+[p,S]=polyfit(z,y,4);
+[Y,dev]=polyval(p,z,S); % dev enthÃ¤lt die Fehler (im statistischen Sinn, s. Matlab-Hilfe)
+figure(44), errorbar(z,y,dev,'.'); hold on, % zur visuellen Kontrolle
+plot(z,Y,'g-'); 
+title('Fit mit Polynom 4. Ordnung zur Fehlerermittlung');
+pause(1)
+    
+function [ileft,iright,x,y]=getlimits(fig2hndl,w,TEXT)
+% function [ileft,iright,x,y]=getlimits(fig2hndl)
+% Lets you select the central position of the excitation peak on a line plot in figure with
+% handle fig2hndl. From this position, 2 positions  w/2 to the left and w/2 to the rigth are calculated.
+% Returns indices ileft and iright of the data at these
+% positions, as well as the x- and y-values within that range.
+set(gcf,'pointer','fullcrosshair');
+texthndl=text('Position',[.2,.2],'String',TEXT,...
+        'FontSize',10,'Units','normalized');
+drawnow;
+[xc,yc]=ginput(1);
+linehndl=findobj(fig2hndl,'type','line','-and','color','blue');
+x=get(linehndl,'xdata');
+y=get(linehndl,'ydata');
+idx=find(x > xc-w/2);
+ileft=min(idx);
+idx=find(x < xc+w/2);
+iright=max(idx);
+x=x(ileft:iright);
+y=y(ileft:iright);
+delete(texthndl);
+
+% Subfunction
+function YLimits=showRotCell(xScale,XLimits)
+CLineSet=[5 10 30 60 90 200];
+if exist('CLinSet.mat','file'), load('CLinSet.mat'), end
+rotcellh=openfig('RotCell.fig');
+HG=findobj(rotcellh,'type','hggroup');
+X=get(HG,'xdata');
+Y=get(HG,'ydata');
+Z=get(HG,'zdata');
+Xs=X*xScale;Ys=Y*xScale;
+contour(Xs,Ys,Z, CLineSet);
+raxh=gca;
+set(raxh,'YlimMode','auto');
+YL=get(raxh,'Ylim'); YW = YL(2) - YL(1);
+YLimits=[YL(1)-0.2*YW YL(2)+0.2*YW];
+set(raxh,'Ylim',YLimits);
+set(raxh,'Xlim',XLimits)
+drawnow
+
+
+% subfunctions
+function out=chi(P,x,y)
+S=Gsimu(P,x);
+out=sum(sum((y-S).^2));
+
+function S=Gsimu(P,x)
+S = 1/(sqrt(2*pi)*P(1))* exp(-(x-P(2)).^2 / (2*P(1)^2)) + P(3);
+
+% subfunctions
+function out=Dchi(P,x,y,HP)
+S=Dsimu(P,x,HP(1:4));
+fehler=HP(5:end);
+out=sum(((y-S)./fehler').^2);
+strafe=abs(P(3))-0.05*y(1); % offset auf ca. 5% des ersten Iavg-Wertes begrenzen
+strafe=2+tanh(10*strafe/(0.05*y(1)));
+out=out*strafe;
+
+function S=Dsimu(P,x,HP)
+sigma0=P(1);lambda=HP(4); %vollstÃ¤ndiges Modell mit Images
+ActPos=HP(1); xTip=HP(2); xBody=HP(3);
+sigma=sqrt(2*P(2)*x + sigma0^2);
+S =exp(-lambda*x) / sqrt(2*pi)./ sigma .*(1+exp(-4*(ActPos-xTip)^2 ./ (2*sigma.^2))...   
+                                   - exp(-4*(ActPos-xBody)^2 ./ (2*sigma.^2))) +P(3) ;
+
+function out=DchiX(P,x,y,HP)
+S=DsimuX(P,x,HP(1:4));
+fehler=HP(5:end);
+out=sum(((y-S)./fehler').^2);
+strafe=abs(P(3))-0.05*y(1); % offset auf ca. 5% des ersten Iavg-Wertes begrenzen
+strafe=2+tanh(10*strafe/(0.05*y(1)));
+out=out*strafe;
+                               
+                               
+function S=DsimuX(P,x,HP)
+sigma0=P(1);lambda=HP(4); %Test: Ohne Images
+sigma=sqrt(2*P(2)*x + sigma0^2);
+S = exp(-lambda*x)/sqrt(2*pi) ./ sigma  + P(3);          % 
