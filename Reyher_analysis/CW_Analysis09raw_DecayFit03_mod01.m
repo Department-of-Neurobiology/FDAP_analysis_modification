@@ -6,7 +6,7 @@ function CW_Analysis
 %3)		Automatically corrects for mean intensity
 %4)		For DecayFit03 choosing the file was done for changing the working directory - is automatic for pwd now
 %5)		Skips "Soma and tip in frame", directly assumes we only selected process in the area
-%6)		The final parameter is saved in a atble in the upper directory
+%6)		The final parameter is saved in a table in the upper directory
 %Nataliya Trushina, 09.01.2020
 
 % Version 9, addition / changes: 
@@ -68,12 +68,12 @@ for pict=1:NumberOfFrames+DarkFramePresent
     xmax=sze(2); 
     ymax=sze(1);
     Z=z(ymax:-1:1,1:xmax,colorindex); % in viewer programs y=0 is top, in matlab  y=0 is bottom
-    clear z; pack; % free memory from the very large array z
+    clear z; % free memory from the very large array z
     IdxSat=find(Z>4094);
     SatPix=length(IdxSat);
     Z=double(Z); % raw data are now in double precision array "Z"
     %-----------------------------
-    fz=filter2(ff,Z,'vaild');% now smoothing Z with f
+    fz=filter2(ff,Z,'valid');% now smoothing Z with f
     a=min(min(fz));fz=(fz-a); % now getting new minimum and subtract it
     if DarkFramePresent & pict==1
         fn2='dark';
@@ -216,7 +216,7 @@ for pict=1:NumberOfFrames+DarkFramePresent   % main loop
     z=(M>1).*(fz+eps);            % select ROI using  mask M; z is zero outside ROI and at least eps inside (eps is 2.2e-16 or so)
    
     if pict == 1
-     newsize=size(z); newymax=newsize(1); newxmax=newsize(2); % überflüssig in Schleife - fz hat konstante Grösse
+     newsize=size(z); newymax=newsize(1); newxmax=newsize(2); % ï¿½berflï¿½ssig in Schleife - fz hat konstante Grï¿½sse
      [yInROI,xInROI]=find(z > 0);                       % find x and y coordinates where z > 0 
      NinROI=length(yInROI);                             % Number of pixels in ROI
     end %if pict
@@ -477,8 +477,8 @@ b = uicontrol('Parent',a, ...
 % Version 03 
 % lambda fixed
 % 3 Fitparameter: Sigma0, D, offset
-% Zeifacher Fit für den Fall, dass das Anfangs-D zu schlecht ist.
-% Fit mit "echtem" Chiquadrat, dafür: Fehler der Messpunkte aus Polynomfit
+% Zeifacher Fit fï¿½r den Fall, dass das Anfangs-D zu schlecht ist.
+% Fit mit "echtem" Chiquadrat, dafï¿½r: Fehler der Messpunkte aus Polynomfit
 % Offset wird im letzten Plot als rote Linie angezeigt
 clear all, close all, screensize=get(0,'ScreenSize');
 %dummy='All.mat'; %literally a dummy, not used anywhere
@@ -531,9 +531,9 @@ if model==1
     xTip=xc(1), xBody=xc(2), abs(xTip-xBody)
 end
 % pict=StartF;
-% CBD=struct('pict',pict,'NofF',NofF,'tP1binx',tP1binx,'tI1binAvg',tI1binAvg,'xScale',xScale); % Callbacks der Knöpfe benötigen diese Daten
+% CBD=struct('pict',pict,'NofF',NofF,'tP1binx',tP1binx,'tI1binAvg',tI1binAvg,'xScale',xScale); % Callbacks der Knï¿½pfe benï¿½tigen diese Daten
 % guidata(fig2hndl,CBD); % CallBackData in Datenbereich der figure
-% evalin('base','CBD=guidata(gcf);'); % CBD im Base-Bereich für Callbacks erzeugen
+% evalin('base','CBD=guidata(gcf);'); % CBD im Base-Bereich fï¿½r Callbacks erzeugen
 % bup = uicontrol('Parent',fig2hndl, ...
 %     'Units','Normalized', ...
 %     'Callback',['CBD.pict=CBD.pict+1;CBD.pict=min(CBD.pict,CBD.NofF);',...
@@ -598,7 +598,7 @@ delete(hT); delete(hL);
 Pout=fminsearch(@(P) chi(P,Xs,Ys),Pstart, optimset('Display','iter'))
 sigma0=Pout(1);
 offsetSF=Pout(3);
-ActPos=Pout(2); % Distance from tip in µm
+ActPos=Pout(2); % Distance from tip in ï¿½m
    % show the result
 hL=plot(Xs,Gsimu(Pout,Xs),'g');
 hT=title(['Fitted curve, Sigma0 = ', num2str(sigma0),' . Paused for 5s.']);
@@ -621,7 +621,7 @@ text(0.2,0.75,cd,'units','normalized','interpreter','none')
 
 %% ********** Fit von Iavg(t)
 Pstart=[sigma0 D offsetSF ];   % parameter estimates, partly from start frame (see above)  
-if model==1                    % Vollständiges Modell mit Images, braucht Positionen von Tip, Body und Aktivierungsstelle
+if model==1                    % Vollstï¿½ndiges Modell mit Images, braucht Positionen von Tip, Body und Aktivierungsstelle
     HP=[ActPos, xTip, xBody, lambda, fehler']; %constant parameters
     hL=plot(t,Dsimu(Pstart,t,HP),'g'); % show start estimates
     hT=title('Start curve. Paused for 1s.');pause(pausetime)
@@ -660,23 +660,15 @@ text(0.2,0.9,['Chi^2: ' num2str(chisquare) ' Soll: ' num2str(Soll)],'units','nor
 hold off           %figure(4)
 set(4,'Position',screensize);
 saveas(4,'NewFitlambdafix.fig'),saveas(4,'NewFitlambdafix.jpg')
-%Save final parameter into a table
 disp(num2str(D))
 dlmwrite('..\Deff_auto.csv',num2str(D),'delimiter','','-append')
 [~, ParentFolderName] = fileparts(pwd);
 outvar = [ParentFolderName, ';', num2str(D)];
 dlmwrite('..\name_Deff_auto.csv',outvar,'delimiter','','-append')
-%Check the fit
-msgbox('Paused for checking the fit. Press any key to continue.')
-disp('Press any key to close session.')
-pause
-clear all
-close all
-
 %% --------------------------------------------------------------------------
 % Subfunctions
-
-
+close all
+clear all
 %pause
 %
 %
@@ -753,10 +745,10 @@ hold off
 %
 function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,low,high,binWidth,pad)
 % function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,binWidth,pad)
-% B ist unabhängige, A ist abhängige Variable, also A(k)=f(B(k)). B-Werte sind nicht äquidistant.
-% put2bins ordnet jeden B-Wert einem Intervall (=bin) der Breite binWidth auf einer äquidistanten Skala zu.
-% Diese Skala läuft von min(B) bis max(B) in Schritten von binWidth und
-% wird in Bbin zurückgegeben. Die zu einem Intervall j gehörenden A-Werte
+% B ist unabhï¿½ngige, A ist abhï¿½ngige Variable, also A(k)=f(B(k)). B-Werte sind nicht ï¿½quidistant.
+% put2bins ordnet jeden B-Wert einem Intervall (=bin) der Breite binWidth auf einer ï¿½quidistanten Skala zu.
+% Diese Skala lï¿½uft von min(B) bis max(B) in Schritten von binWidth und
+% wird in Bbin zurï¿½ckgegeben. Die zu einem Intervall j gehï¿½renden A-Werte
 % werden aufsummiert nach AbinSUM(j) gelegt.
 % AbinAVG ist AbinSUM/(Anzahl der A-Werte im Intervall).
 % pad gibt Breite eines Einbettbereiches E an, in den Bbin
@@ -766,7 +758,7 @@ function [Bbin,AbinAVG,AbinSUM] = put2bins(B,A,low,high,binWidth,pad)
 Bmin=low;
 nB=floor((B-Bmin)/binWidth) +1;       % nB ordnet jedem B-Wert eine bin- (oder Intervall-) Nummer zu
 nBstop=floor((high-Bmin)/binWidth) +1;;  % Die Intervalle laufen von 1 bis nBstop. Nicht jedes Intervall kommt vor,
-% d.h. nB enthält i.A. nicht jede Zahl von
+% d.h. nB enthï¿½lt i.A. nicht jede Zahl von
 % 1 bis nBstop
 kB=1:nBstop;                    % Index aller Bins
 
@@ -775,7 +767,7 @@ AbinSUM=AbinAVG;
 for k=kB                           % Schleife vektorisieren = ?
     binmembers=find(nB==k);
     AbinSUM(k)=sum(A(binmembers));   % Summe von Eregignissen
-    if ~isempty(binmembers)           % Mittelwert über Bin-Mitglieder
+    if ~isempty(binmembers)           % Mittelwert ï¿½ber Bin-Mitglieder
         AbinAVG(k)=AbinSUM(k)/length(binmembers);
     end %if
 end %for
@@ -823,7 +815,7 @@ zentr=mean(x); % Fit mit Polynom 4. Ordnung zur Ermittlung der Fehler der Messpu
 skala=std(x);   %Skalieren und Zentrieren
 z=(x-zentr)/skala;
 [p,S]=polyfit(z,y,4);
-[Y,dev]=polyval(p,z,S); % dev enthält die Fehler (im statistischen Sinn, s. Matlab-Hilfe)
+[Y,dev]=polyval(p,z,S); % dev enthï¿½lt die Fehler (im statistischen Sinn, s. Matlab-Hilfe)
 figure(44), errorbar(z,y,dev,'.'); hold on, % zur visuellen Kontrolle
 plot(z,Y,'g-'); 
 title('Fit mit Polynom 4. Ordnung zur Fehlerermittlung');
@@ -835,14 +827,16 @@ function [ileft,iright,x,y]=getlimits(fig2hndl,w,TEXT)
 % handle fig2hndl. From this position, 2 positions  w/2 to the left and w/2 to the rigth are calculated.
 % Returns indices ileft and iright of the data at these
 % positions, as well as the x- and y-values within that range.
-set(gcf,'pointer','fullcrosshair');
+set(gcf,'pointer','crosshair');
 texthndl=text('Position',[.2,.2],'String',TEXT,...
         'FontSize',10,'Units','normalized');
 drawnow;
 [xc,yc]=ginput(1);
-linehndl=findobj(fig2hndl,'type','line','-and','color','blue');
-x=get(linehndl,'xdata');
-y=get(linehndl,'ydata');
+linehndl=findobj(fig2hndl,'type','line');
+x=get(linehndl,'XData');
+%disp(findobj(fig2hndl,'type','line'))
+y=get(linehndl,'YData');
+
 idx=find(x > xc-w/2);
 ileft=min(idx);
 idx=find(x < xc+w/2);
@@ -889,7 +883,7 @@ strafe=2+tanh(10*strafe/(0.05*y(1)));
 out=out*strafe;
 
 function S=Dsimu(P,x,HP)
-sigma0=P(1);lambda=HP(4); %vollständiges Modell mit Images
+sigma0=P(1);lambda=HP(4); %vollstï¿½ndiges Modell mit Images
 ActPos=HP(1); xTip=HP(2); xBody=HP(3);
 sigma=sqrt(2*P(2)*x + sigma0^2);
 S =exp(-lambda*x) / sqrt(2*pi)./ sigma .*(1+exp(-4*(ActPos-xTip)^2 ./ (2*sigma.^2))...   
