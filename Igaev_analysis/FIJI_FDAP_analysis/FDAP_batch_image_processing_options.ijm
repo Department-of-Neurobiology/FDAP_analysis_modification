@@ -37,6 +37,7 @@ function processFile(input, output, file) {
 	resetMinAndMax();
 	name = File.nameWithoutExtension();
 	id=getImageID();
+	run("HiLo");
 	waitForUser("Draw ROI and check, close file if ROI is inappropriate");
 	if (isOpen(id) == false) {
 	 	f = File.open(output + File.separator + name + "_inappr_ROI" + ".txt");
